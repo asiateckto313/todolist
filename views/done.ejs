@@ -1,0 +1,22 @@
+<!DOCTYPE html>
+
+<html>
+    <head>
+        <title>My todolist</title>
+        <style>
+            a {text-decoration: none; color: black;}
+        </style>
+    </head>
+
+    <body>
+        <h1>My DoneTask list</h1>
+        <ul>
+        <% doneTask.forEach(function(todo, index) { %>
+            <li><a href="#">&#9989;</a> <%= todo %></li>
+        <% }); %>
+        </ul>
+
+        <input name="action" onclick="window.location.href='/'" type="submit" value="Home"/>
+        <input name="action" onclick="window.location.href='/reset_doneTaskList'"  type="submit" value="Reset todolist"/>
+    </body>
+</html>
