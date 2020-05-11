@@ -13,10 +13,20 @@ let session_event = new EventEmitter(),
     hasExpired = (req, res) => {
     if(req.sessionOptions.expires){
         let date_from_now = new Date(Date.now()),expired_time = req.sessionOptions.expires
-        if( date_from_now >= expired_time)
-            session_event.emit('hasExpired', req, res)
+        if( date_from_now >= expired_time){
+             //Reinitialisation of the session options
+            req.session.todolist = undefined
+            req.session.doneTaskList = undefined
+            req.sessionOptions.expires = new Date(Date.now() + (30 * 1000))
+
+            //redirect the user to home
+            
+
+            console.log("hasExpired event emitted") 
+        }
+        //session_event.emit('hasExpired', req, res)
     }
-    res.end()
+    //res.end()
 
 }
 
@@ -25,7 +35,7 @@ let session_event = new EventEmitter(),
 app.use('./public',express.static('public'))
 .use(session({
     secret : 'Super@dminP@bloToDoList2020',//Your secret  key to put here
-    expires:new Date(Date.now()+ 3600 * 1000) // expires every 30s
+    expires:new Date(Date.now()+ 30 * 1000) // expires every 30s
 }))
 
 
@@ -43,12 +53,12 @@ app.use('./public',express.static('public'))
 })
 
 
-/*/I got an issue here, it's said hasExpired(my function) has to be callBack one
+//I got an issue here, it's said hasExpired(my function) has to be callBack one
 .use( (req, res, next)=>{
-    setInterval(hasExpired(req,res),1)
-    next();
+    hasExpired(req,res)
+    next()
 })
-*/
+
 
 //Routes of my application
 app.get('/', (req,res) => {
