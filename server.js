@@ -13,9 +13,10 @@ let session_event = new EventEmitter(),
     hasExpired = (req, res) => {
     if(req.sessionOptions.expires){
         let date_from_now = new Date(Date.now()),expired_time = req.sessionOptions.expires
-        if( date_from_now == expired_time)
+        if( date_from_now >= expired_time)
             session_event.emit('hasExpired')
     }
+    res.end()
 
 }
 
@@ -42,12 +43,12 @@ app.use('./public',express.static('public'))
 })
 
 
-//I got an issue here, it's said hasExpired(my function) has to be callBack one
+/*/I got an issue here, it's said hasExpired(my function) has to be callBack one
 .use( (req, res, next)=>{
     setInterval(hasExpired(req,res),1)
     next();
 })
-
+*/
 
 //Routes of my application
 app.get('/', (req,res) => {
@@ -97,32 +98,7 @@ app.get('/', (req,res) => {
 })
 
 .get("/timeleft", (req, res)=>{
-    try{
-    res.end(req.session.cookie.expires)
-    console.log(req.session.cookie.expires)
-    }catch(e){
-        console.log("erreur e")
-        try {
-            console.log(req.session.maxAge)
-            console.log(req.sessionOptions.maxAge)
-            console.log(req.sessionOptions.secret)
-            console.log(req.sessionOptions.expires)
-            console.log(req.sessionOptions.expires.toString())
-            hasExpired(req,res)
-            
-        } catch (f) {
-            console.log("erreur f")
-            console.log(f)
-            try {
-                console.log(req.sessionOptions.maxAge)
-            } catch (g) {
-                console.log("Bah aucun de tous ça")
-                console.log(req.sessionOptions.expires)
-
-            }
-        }
-    }
-    res.end()
+    hasExpired(req,res)
 })
 
 //setInterval(hasExpired(req,res),1)
@@ -130,6 +106,7 @@ session_event.on('hasExpired', () => {
     console.log("hasExpired event emitted")
 
 })
+
 server.listen(PORT, ()=>{
     console.log("Serveur is listening on port ", PORT)
 })
