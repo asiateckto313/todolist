@@ -14,7 +14,7 @@ let session_event = new EventEmitter(),
     if(req.sessionOptions.expires){
         let date_from_now = new Date(Date.now()),expired_time = req.sessionOptions.expires
         if( date_from_now >= expired_time)
-            session_event.emit('hasExpired')
+            session_event.emit('hasExpired', req, res)
     }
     res.end()
 
@@ -25,7 +25,7 @@ let session_event = new EventEmitter(),
 app.use('./public',express.static('public'))
 .use(session({
     secret : 'Super@dminP@bloToDoList2020',//Your secret  key to put here
-    expires:new Date(Date.now()+ 30 * 1000) // expires every 30s
+    expires:new Date(Date.now()+ 3600 * 1000) // expires every 30s
 }))
 
 
@@ -102,8 +102,17 @@ app.get('/', (req,res) => {
 })
 
 //setInterval(hasExpired(req,res),1)
-session_event.on('hasExpired', () => {
-    console.log("hasExpired event emitted")
+session_event.on('hasExpired', (req, res) => {
+    //Reinitialisation of the session options
+    req.session.todolist = undefined
+    req.session.doneTaskList = undefined
+    req.sessionOptions.expires = new Date(Date.now() + (30 * 1000))
+
+    //redirect the user to home
+    res.redirect('/')
+
+    console.log("hasExpired event emitted") 
+
 
 })
 
