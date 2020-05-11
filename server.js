@@ -23,13 +23,13 @@ let session_event = new EventEmitter(),
 //app configuration
 app.use('./public',express.static('public'))
 .use(session({
-    secret : 'Super@dminP@bloToDoList2020',
-    expires:new Date(Date.now()+ 30 * 1000)
+    secret : 'Super@dminP@bloToDoList2020',//Your secret  key to put here
+    expires:new Date(Date.now()+ 30 * 1000) // expires every 30s
 }))
 
 
-/* S'il n'y a pas de todolist dans la session,
-    on en crée une vide sous forme d'array avant la suite 
+/* if we don't have the todolist array,
+    we initialize it
 */
 .use( (req, res, next)=>{
     if (typeof(req.session.todolist) == 'undefined') {
